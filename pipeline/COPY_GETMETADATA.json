@@ -26,7 +26,7 @@
 						}
 					},
 					"fieldList": [
-						"columnCount"
+						"size"
 					],
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
@@ -62,9 +62,18 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"container_name": "raw",
-							"folder_name": "*",
-							"file_name": "*",
-							"delimiter": "*"
+							"folder_name": {
+								"value": "@toLower('')",
+								"type": "Expression"
+							},
+							"file_name": {
+								"value": "@toLower('')",
+								"type": "Expression"
+							},
+							"delimiter": {
+								"value": "@toLower('')",
+								"type": "Expression"
+							}
 						}
 					},
 					"fieldList": [
@@ -108,7 +117,7 @@
 						}
 					},
 					"fieldList": [
-						"structure"
+						"exists"
 					]
 				}
 			}
