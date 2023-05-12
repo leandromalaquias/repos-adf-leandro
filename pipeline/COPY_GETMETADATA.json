@@ -62,9 +62,9 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"container_name": "raw",
-							"folder_name": ".",
-							"file_name": ".",
-							"delimiter": "."
+							"folder_name": "*",
+							"file_name": "*",
+							"delimiter": "*"
 						}
 					},
 					"fieldList": [
