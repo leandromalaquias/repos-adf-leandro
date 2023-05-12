@@ -1,0 +1,138 @@
+{
+	"name": "COPY_DATA",
+	"properties": {
+		"activities": [
+			{
+				"name": "COPY_SQL_TO_SQL",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "upsert",
+						"upsertSettings": {
+							"useTempDB": true,
+							"keys": [
+								"ID"
+							]
+						},
+						"sqlWriterUseTableLock": false,
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_gen_azuresql",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema_name": "SalesLT",
+							"table_name": "TB_ADF_COPY_SOURCE"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_gen_azuresql",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema_name": "SalesLT",
+							"table_name": "TB_ADF_COPY_TARGET"
+						}
+					}
+				]
+			},
+			{
+				"name": "COPY_SQL_TO_LAKE",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "COPY_SQL_TO_SQL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_gen_azuresql",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema_name": "SalesLT",
+							"table_name": "TB_ADF_COPY_TARGET"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_gen_csv",
+						"type": "DatasetReference",
+						"parameters": {
+							"container_name": "raw",
+							"folder_name": "dataside",
+							"file_name": "tb_copy_upsert.csv",
+							"delimiter": ";"
+						}
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}
