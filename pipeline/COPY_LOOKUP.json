@@ -114,7 +114,7 @@
 							"delimiter": ";"
 						}
 					},
-					"firstRowOnly": true
+					"firstRowOnly": false
 				}
 			},
 			{
@@ -149,7 +149,8 @@
 							"schema_name": "SalesLT",
 							"table_name": "Customer"
 						}
-					}
+					},
+					"firstRowOnly": false
 				}
 			},
 			{
@@ -225,7 +226,8 @@
 							"schema_name": "SalesLT",
 							"table_name": "Customer"
 						}
-					}
+					},
+					"firstRowOnly": false
 				}
 			}
 		],
