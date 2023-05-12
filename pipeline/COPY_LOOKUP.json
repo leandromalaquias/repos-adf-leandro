@@ -31,7 +31,10 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"container_name": "raw",
-							"folder_name": "dataside",
+							"folder_name": {
+								"value": "@toLower('')",
+								"type": "Expression"
+							},
 							"file_name": "plan_cor.csv",
 							"delimiter": ";"
 						}
@@ -109,7 +112,10 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"container_name": "raw",
-							"folder_name": "dataside",
+							"folder_name": {
+								"value": "@toLower('')",
+								"type": "Expression"
+							},
 							"file_name": "plan_cor.csv",
 							"delimiter": ";"
 						}
