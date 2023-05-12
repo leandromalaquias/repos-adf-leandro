@@ -48,7 +48,7 @@
 				}
 			},
 			{
-				"name": "Filter1",
+				"name": "Filter TXT",
 				"type": "Filter",
 				"dependsOn": [
 					{
@@ -58,14 +58,24 @@
 						]
 					}
 				],
-				"userProperties": []
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Metadata folder').output.childItems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@contains(item().name,'.txt')",
+						"type": "Expression"
+					}
+				}
 			},
 			{
 				"name": "ForEach1",
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Filter1",
+						"activity": "Filter TXT",
 						"dependencyConditions": [
 							"Succeeded"
 						]
