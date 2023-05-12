@@ -58,6 +58,10 @@
 					"items": {
 						"value": "@activity('Lookup Controller').output.value",
 						"type": "Expression"
+					},
+					"condition": {
+						"value": "@equals(item().load_table, 1)",
+						"type": "Expression"
 					}
 				}
 			}
