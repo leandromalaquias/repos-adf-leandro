@@ -16,7 +16,7 @@
 			"recurrence": {
 				"frequency": "Day",
 				"interval": 1,
-				"startTime": "2023-05-12T22:55:00",
+				"startTime": "2023-05-12T23:00:00",
 				"timeZone": "E. South America Standard Time",
 				"schedule": {
 					"minutes": [
