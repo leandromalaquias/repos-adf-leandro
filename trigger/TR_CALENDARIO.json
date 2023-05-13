@@ -1,0 +1,32 @@
+{
+	"name": "TR_CALENDARIO",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "COPY_TESTE_TR",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2023-05-12T22:55:00",
+				"timeZone": "E. South America Standard Time",
+				"schedule": {
+					"minutes": [
+						55
+					],
+					"hours": [
+						22
+					]
+				}
+			}
+		}
+	}
+}
