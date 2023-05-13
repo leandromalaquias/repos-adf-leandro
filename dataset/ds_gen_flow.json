@@ -11,9 +11,6 @@
 			},
 			"file_name": {
 				"type": "string"
-			},
-			"delimiter": {
-				"type": "string"
 			}
 		},
 		"annotations": [],
