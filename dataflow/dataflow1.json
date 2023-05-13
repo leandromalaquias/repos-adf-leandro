@@ -19,7 +19,22 @@
 					"name": "sourceArtista"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_gen_parquet_flow",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_gen_parquet_flow",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				}
+			],
 			"transformations": [
 				{
 					"name": "RenameColumns"
@@ -38,6 +53,9 @@
 				},
 				{
 					"name": "aggregate1"
+				},
+				{
+					"name": "split1"
 				}
 			],
 			"scriptLines": [
@@ -84,7 +102,28 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> selectArtista",
 				"join aggregate(groupBy(Artista_NOME),",
-				"     faturamento_artista = sum(VALOR_PGTO)) ~> aggregate1"
+				"     faturamento_artista = sum(VALOR_PGTO)) ~> aggregate1",
+				"aggregate1 split(faturamento_artista > 100000,",
+				"     disjoint: false) ~> split1@(sink1, sink2)",
+				"split1@sink1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     partitionFileNames:['faturamentoBom'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1",
+				"split1@sink2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     partitionFileNames:['faturamentoFraco'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink2"
 			]
 		}
 	}
