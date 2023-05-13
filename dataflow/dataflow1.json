@@ -9,18 +9,28 @@
 						"referenceName": "ds_gen_flow",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "sourceEventoArtista"
 				},
 				{
 					"dataset": {
 						"referenceName": "ds_gen_flow",
 						"type": "DatasetReference"
 					},
-					"name": "source2"
+					"name": "sourceArtista"
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "RenameColumns"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "derivedColumn2"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          CODIGO as short,",
@@ -31,7 +41,7 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source1",
+				"     ignoreNoFilesFound: false) ~> sourceEventoArtista",
 				"source(output(",
 				"          COD_ARTISTA as short,",
 				"          CPF as long,",
@@ -40,7 +50,18 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source2"
+				"     ignoreNoFilesFound: false) ~> sourceArtista",
+				"sourceEventoArtista select(mapColumn(",
+				"          CODIGO,",
+				"          VALOR_PGTO,",
+				"          DT_PGTO,",
+				"          COD_ARTISTA = FKCOD_ARTISTA,",
+				"          COD_EVENTO = FKCOD_EVENTO",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> RenameColumns",
+				"sourceArtista derive(nomeLower = lower(NOME)) ~> derivedColumn1",
+				"RenameColumns derive(colunaCalculada = CODIGO*VALOR_PGTO) ~> derivedColumn2"
 			]
 		}
 	}
