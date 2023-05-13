@@ -1,0 +1,97 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adf-dataside-incompany"
+		},
+		"ls_azure_sql_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "secret-stringconnsqldatabase"
+		},
+		"ls_data_lake_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://dlsdatasideincompany.dfs.core.windows.net"
+		},
+		"ls_key_vault_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://kv-dataside-incompany.vault.azure.net/"
+		},
+		"ls_sql_server_local_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "secretstringconnsqllocal"
+		},
+		"TR_STORAGE_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/70034afb-0633-4b8f-ab41-7846b91da15f/resourceGroups/rg-dataside-incompany/providers/Microsoft.Storage/storageAccounts/dlsdatasideincompany"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "adf-dataside-incompany_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"ls_key_vault_properties_typeProperties_baseUrl": {
+						"value": "[parameters('ls_key_vault_properties_typeProperties_baseUrl')]"
+					},
+					"ls_azure_sql_properties_typeProperties_connectionString_secretName": {
+						"value": "[parameters('ls_azure_sql_properties_typeProperties_connectionString_secretName')]"
+					},
+					"ls_data_lake_properties_typeProperties_url": {
+						"value": "[parameters('ls_data_lake_properties_typeProperties_url')]"
+					},
+					"ls_sql_server_local_properties_typeProperties_connectionString_secretName": {
+						"value": "[parameters('ls_sql_server_local_properties_typeProperties_connectionString_secretName')]"
+					},
+					"TR_STORAGE_properties_typeProperties_scope": {
+						"value": "[parameters('TR_STORAGE_properties_typeProperties_scope')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "adf-dataside-incompany_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adf-dataside-incompany_ArmTemplate_0')]"
+			]
+		}
+	]
+}

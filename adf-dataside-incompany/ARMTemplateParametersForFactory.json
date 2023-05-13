@@ -1,0 +1,24 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adf-dataside-incompany"
+		},
+		"ls_azure_sql_properties_typeProperties_connectionString_secretName": {
+			"value": "secret-stringconnsqldatabase"
+		},
+		"ls_data_lake_properties_typeProperties_url": {
+			"value": "https://dlsdatasideincompany.dfs.core.windows.net"
+		},
+		"ls_key_vault_properties_typeProperties_baseUrl": {
+			"value": "https://kv-dataside-incompany.vault.azure.net/"
+		},
+		"ls_sql_server_local_properties_typeProperties_connectionString_secretName": {
+			"value": "secretstringconnsqllocal"
+		},
+		"TR_STORAGE_properties_typeProperties_scope": {
+			"value": "/subscriptions/70034afb-0633-4b8f-ab41-7846b91da15f/resourceGroups/rg-dataside-incompany/providers/Microsoft.Storage/storageAccounts/dlsdatasideincompany"
+		}
+	}
+}
