@@ -27,6 +27,29 @@
 					],
 					"scriptBlockExecutionTimeout": "02:00:00"
 				}
+			},
+			{
+				"name": "Filter1",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "SELECT_TABLE",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('SELECT_TABLE').output.resultSets[0]['rows']",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@equals(item().CustomerID, 10)",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"annotations": []
