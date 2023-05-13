@@ -1,0 +1,53 @@
+{
+	"name": "ETL_FLOW",
+	"properties": {
+		"activities": [
+			{
+				"name": "EXEC FLOW",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_ARTISTAS",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"sourceEventoArtista": {
+								"container_name": "bronze",
+								"file_name": "evento_artista.csv"
+							},
+							"sourceArtista": {
+								"container_name": "bronze",
+								"file_name": "artista.csv"
+							},
+							"sink1": {
+								"container_name": "refined",
+								"directory_name": "vboas"
+							},
+							"sink2": {
+								"container_name": "refined",
+								"directory_name": "vruins"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "None",
+					"cacheSinks": {
+						"firstRowOnly": true
+					}
+				}
+			}
+		],
+		"annotations": []
+	}
+}

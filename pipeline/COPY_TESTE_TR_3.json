@@ -1,0 +1,17 @@
+{
+	"name": "COPY_TESTE_TR_3",
+	"properties": {
+		"activities": [
+			{
+				"name": "TESTE_TRIGGER",
+				"type": "Wait",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"waitTimeInSeconds": 1
+				}
+			}
+		],
+		"annotations": []
+	}
+}

@@ -1,0 +1,127 @@
+{
+	"name": "COPY_GETMETADATA",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get Metadata file",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_gen_csv",
+						"type": "DatasetReference",
+						"parameters": {
+							"container_name": "raw",
+							"folder_name": "dataside",
+							"file_name": "tb_copy_upsert.csv",
+							"delimiter": ";"
+						}
+					},
+					"fieldList": [
+						"columnCount"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "Get Metadata folder",
+				"type": "GetMetadata",
+				"dependsOn": [
+					{
+						"activity": "Get Metadata file",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_gen_csv",
+						"type": "DatasetReference",
+						"parameters": {
+							"container_name": "raw",
+							"folder_name": {
+								"value": "@toLower('')",
+								"type": "Expression"
+							},
+							"file_name": {
+								"value": "@toLower('')",
+								"type": "Expression"
+							},
+							"delimiter": {
+								"value": "@toLower('')",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "Get Metadata Table",
+				"type": "GetMetadata",
+				"dependsOn": [
+					{
+						"activity": "Get Metadata folder",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_gen_azuresql",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema_name": "SalesLT",
+							"table_name": "TB_ADF_COPY_TARGET"
+						}
+					},
+					"fieldList": [
+						"structure"
+					]
+				}
+			}
+		],
+		"annotations": []
+	}
+}
