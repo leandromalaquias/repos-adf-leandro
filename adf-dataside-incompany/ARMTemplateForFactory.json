@@ -26,6 +26,10 @@
 		"TR_STORAGE_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/70034afb-0633-4b8f-ab41-7846b91da15f/resourceGroups/rg-dataside-incompany/providers/Microsoft.Storage/storageAccounts/dlsdatasideincompany"
+		},
+		"dbw_mdw_properties_typeProperties_existingClusterId": {
+			"type": "string",
+			"defaultValue": "0517-165337-2ljm4mtf"
 		}
 	},
 	"variables": {
@@ -2063,6 +2067,316 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/ds_gen_flow')]",
 				"[concat(variables('factoryId'), '/datasets/ds_gen_parquet_flow')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dbw_mdw')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDatabricks",
+				"typeProperties": {
+					"domain": "https://adb-7458089905851211.11.azuredatabricks.net",
+					"accessToken": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "ls_key_vault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "dbw-key",
+						"secretVersion": "94e057de3d944ed09ebbba5ce6277daf"
+					},
+					"existingClusterId": "[parameters('dbw_mdw_properties_typeProperties_existingClusterId')]"
+				},
+				"connectVia": {
+					"referenceName": "ir-dataside-incompany",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/ir-dataside-incompany')]",
+				"[concat(variables('factoryId'), '/linkedServices/ls_key_vault')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_artista_silver')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ntb_artista",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Shared/silver/Bronze_Silver_Artista_Python_SQL"
+						},
+						"linkedServiceName": {
+							"referenceName": "dbw_mdw",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "MDW/silver"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dbw_mdw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_estilo_musical_silver')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ntb_estilo_musical",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Shared/silver/Bronze_Silver_Estilo_Musical_Python"
+						},
+						"linkedServiceName": {
+							"referenceName": "dbw_mdw",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "MDW/silver"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dbw_mdw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_evento_artista_silver')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ntb_evento_artista",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Shared/silver/Bronze_Silver_Evento_Artista_Python"
+						},
+						"linkedServiceName": {
+							"referenceName": "dbw_mdw",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "MDW/silver"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dbw_mdw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_evento_silver')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ntb_evento",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Shared/silver/Bronze_Silver_Evento_SQL"
+						},
+						"linkedServiceName": {
+							"referenceName": "dbw_mdw",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "MDW/silver"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dbw_mdw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_localizacao_silver')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ntb_localizacao",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Shared/silver/Bronze_Silver_Localizacao_SQL"
+						},
+						"linkedServiceName": {
+							"referenceName": "dbw_mdw",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "MDW/silver"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dbw_mdw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_organizador_silver')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ntb_organizador",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Shared/silver/Bronze_Silver_Organizador_Python"
+						},
+						"linkedServiceName": {
+							"referenceName": "dbw_mdw",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "MDW/silver"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dbw_mdw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_telefone_silver')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ntb_telefone",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Shared/silver/Bronze_Silver_Telefone_Python"
+						},
+						"linkedServiceName": {
+							"referenceName": "dbw_mdw",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "MDW/silver"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dbw_mdw')]"
 			]
 		}
 	]

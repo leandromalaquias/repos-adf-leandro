@@ -26,6 +26,10 @@
 		"TR_STORAGE_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/70034afb-0633-4b8f-ab41-7846b91da15f/resourceGroups/rg-dataside-incompany/providers/Microsoft.Storage/storageAccounts/dlsdatasideincompany"
+		},
+		"dbw_mdw_properties_typeProperties_existingClusterId": {
+			"type": "string",
+			"defaultValue": "0517-165337-2ljm4mtf"
 		}
 	},
 	"variables": {
@@ -298,6 +302,36 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/COPY_TESTE_TR_3')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dbw_mdw')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDatabricks",
+				"typeProperties": {
+					"domain": "https://adb-7458089905851211.11.azuredatabricks.net",
+					"accessToken": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "ls_key_vault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "dbw-key",
+						"secretVersion": "94e057de3d944ed09ebbba5ce6277daf"
+					},
+					"existingClusterId": "[parameters('dbw_mdw_properties_typeProperties_existingClusterId')]"
+				},
+				"connectVia": {
+					"referenceName": "ir-dataside-incompany",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/ir-dataside-incompany')]",
+				"[concat(variables('factoryId'), '/linkedServices/ls_key_vault')]"
 			]
 		},
 		{
@@ -792,52 +826,6 @@
 					"escapeChar": "\\",
 					"firstRowAsHeader": true,
 					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_data_lake')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_gen_parquet')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_data_lake",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"container_name": {
-						"type": "string"
-					},
-					"directory_name": {
-						"type": "string"
-					},
-					"file_name": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@dataset().file_name",
-							"type": "Expression"
-						},
-						"folderPath": {
-							"value": "@dataset().directory_name",
-							"type": "Expression"
-						},
-						"fileSystem": {
-							"value": "@dataset().container_name",
-							"type": "Expression"
-						}
-					},
-					"compressionCodec": "snappy"
 				},
 				"schema": []
 			},
