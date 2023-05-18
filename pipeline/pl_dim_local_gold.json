@@ -1,9 +1,9 @@
 {
-	"name": "pl_dim_artista_gold",
+	"name": "pl_dim_local_gold",
 	"properties": {
 		"activities": [
 			{
-				"name": "ntb_dim_artista",
+				"name": "ntb_dim_local",
 				"type": "DatabricksNotebook",
 				"dependsOn": [],
 				"policy": {
@@ -15,7 +15,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"notebookPath": "/Shared/gold/Silver_Gold_Dim_Artista_Python"
+					"notebookPath": "/Shared/gold/Silver_Gold_Dim_Local_SQL"
 				},
 				"linkedServiceName": {
 					"referenceName": "dbw_mdw",
