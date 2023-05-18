@@ -1,0 +1,31 @@
+{
+	"name": "pl_dim_organizador_db",
+	"properties": {
+		"activities": [
+			{
+				"name": "ntb_dim_organizador",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Shared/DB/Gold_DB_Dim_Organizador_Python"
+				},
+				"linkedServiceName": {
+					"referenceName": "dbw_mdw",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"folder": {
+			"name": "MDW/db"
+		},
+		"annotations": []
+	}
+}
