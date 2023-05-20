@@ -5,6 +5,9 @@
 		"factoryName": {
 			"value": "adf-dataside-incompany"
 		},
+		"dbw_mdw_properties_typeProperties_existingClusterId": {
+			"value": "0518-162617-f1lippva"
+		},
 		"ls_azure_sql_properties_typeProperties_connectionString_secretName": {
 			"value": "secret-stringconnsqldatabase"
 		},
