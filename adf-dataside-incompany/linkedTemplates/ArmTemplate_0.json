@@ -11,6 +11,10 @@
 			"type": "string",
 			"defaultValue": "https://kv-dataside-incompany.vault.azure.net/"
 		},
+		"dbw_mdw_properties_typeProperties_existingClusterId": {
+			"type": "string",
+			"defaultValue": "0518-162617-f1lippva"
+		},
 		"ls_azure_sql_properties_typeProperties_connectionString_secretName": {
 			"type": "string",
 			"defaultValue": "secret-stringconnsqldatabase"
@@ -26,10 +30,6 @@
 		"TR_STORAGE_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/70034afb-0633-4b8f-ab41-7846b91da15f/resourceGroups/rg-dataside-incompany/providers/Microsoft.Storage/storageAccounts/dlsdatasideincompany"
-		},
-		"dbw_mdw_properties_typeProperties_existingClusterId": {
-			"type": "string",
-			"defaultValue": "0517-165337-2ljm4mtf"
 		}
 	},
 	"variables": {
@@ -130,6 +130,35 @@
 				"typeProperties": {}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dbw_mdw')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDatabricks",
+				"typeProperties": {
+					"domain": "https://adb-7458089905851211.11.azuredatabricks.net",
+					"accessToken": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "ls_key_vault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "dbw-key"
+					},
+					"existingClusterId": "[parameters('dbw_mdw_properties_typeProperties_existingClusterId')]"
+				},
+				"connectVia": {
+					"referenceName": "ir-dataside-incompany",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/ir-dataside-incompany')]",
+				"[concat(variables('factoryId'), '/linkedServices/ls_key_vault')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ls_azure_sql')]",
@@ -302,36 +331,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/COPY_TESTE_TR_3')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/dbw_mdw')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureDatabricks",
-				"typeProperties": {
-					"domain": "https://adb-7458089905851211.11.azuredatabricks.net",
-					"accessToken": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "ls_key_vault",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "dbw-key",
-						"secretVersion": "94e057de3d944ed09ebbba5ce6277daf"
-					},
-					"existingClusterId": "[parameters('dbw_mdw_properties_typeProperties_existingClusterId')]"
-				},
-				"connectVia": {
-					"referenceName": "ir-dataside-incompany",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/ir-dataside-incompany')]",
-				"[concat(variables('factoryId'), '/linkedServices/ls_key_vault')]"
 			]
 		},
 		{
@@ -580,257 +579,203 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ds_fixo_cidades')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/pl_artista_silver')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_data_lake",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "cidades.csv",
-						"fileSystem": "raw"
-					},
-					"columnDelimiter": ";",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": [
+				"activities": [
 					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_data_lake')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_fixo_clientes')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_azure_sql",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "CustomerID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "NameStyle",
-						"type": "bit"
-					},
-					{
-						"name": "Title",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FirstName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "MiddleName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LastName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Suffix",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CompanyName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SalesPerson",
-						"type": "nvarchar"
-					},
-					{
-						"name": "EmailAddress",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Phone",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PasswordHash",
-						"type": "varchar"
-					},
-					{
-						"name": "PasswordSalt",
-						"type": "varchar"
-					},
-					{
-						"name": "rowguid",
-						"type": "uniqueidentifier"
-					},
-					{
-						"name": "ModifiedDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
+						"name": "ntb_artista",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Shared/silver/Bronze_Silver_Artista_Python_SQL"
+						},
+						"linkedServiceName": {
+							"referenceName": "dbw_mdw",
+							"type": "LinkedServiceReference"
+						}
 					}
 				],
-				"typeProperties": {
-					"schema": "SalesLT",
-					"table": "Customer"
-				}
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "MDW/silver"
+				},
+				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_azure_sql')]"
+				"[concat(variables('factoryId'), '/linkedServices/dbw_mdw')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ds_gen_azuresql')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/pl_dim_artista_db')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_azure_sql",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"schema_name": {
-						"type": "string"
-					},
-					"table_name": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": {
-						"value": "@dataset().schema_name",
-						"type": "Expression"
-					},
-					"table": {
-						"value": "@dataset().table_name",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_azure_sql')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_gen_csv')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_data_lake",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"container_name": {
-						"type": "string"
-					},
-					"folder_name": {
-						"type": "string"
-					},
-					"file_name": {
-						"type": "string"
-					},
-					"delimiter": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@dataset().file_name",
-							"type": "Expression"
+				"activities": [
+					{
+						"name": "ntb_dim_artista",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
 						},
-						"folderPath": {
-							"value": "@dataset().folder_name",
-							"type": "Expression"
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Shared/DB/Gold_DB_Dim_Artista_Python"
 						},
-						"fileSystem": {
-							"value": "@dataset().container_name",
-							"type": "Expression"
+						"linkedServiceName": {
+							"referenceName": "dbw_mdw",
+							"type": "LinkedServiceReference"
 						}
-					},
-					"columnDelimiter": {
-						"value": "@dataset().delimiter",
-						"type": "Expression"
-					},
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
 				},
-				"schema": []
+				"folder": {
+					"name": "MDW/db"
+				},
+				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_data_lake')]"
+				"[concat(variables('factoryId'), '/linkedServices/dbw_mdw')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ds_gen_flow')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/pl_dim_artista_gold')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_data_lake",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"container_name": {
-						"type": "string"
-					},
-					"file_name": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@dataset().file_name",
-							"type": "Expression"
+				"activities": [
+					{
+						"name": "ntb_dim_artista",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
 						},
-						"fileSystem": {
-							"value": "@dataset().container_name",
-							"type": "Expression"
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Shared/gold/Silver_Gold_Dim_Artista_Python"
+						},
+						"linkedServiceName": {
+							"referenceName": "dbw_mdw",
+							"type": "LinkedServiceReference"
 						}
-					},
-					"columnDelimiter": ";",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
 				},
-				"schema": []
+				"folder": {
+					"name": "MDW/gold"
+				},
+				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_data_lake')]"
+				"[concat(variables('factoryId'), '/linkedServices/dbw_mdw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_dim_local_db')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ntb_dim_local",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Shared/DB/Gold_DB_Dim_Local_Python"
+						},
+						"linkedServiceName": {
+							"referenceName": "dbw_mdw",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "MDW/db"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dbw_mdw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_dim_local_gold')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ntb_dim_local",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Shared/gold/Silver_Gold_Dim_Local_SQL"
+						},
+						"linkedServiceName": {
+							"referenceName": "dbw_mdw",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "MDW/gold"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dbw_mdw')]"
 			]
 		}
 	]
