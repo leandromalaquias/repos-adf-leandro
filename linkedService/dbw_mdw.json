@@ -11,10 +11,9 @@
 					"referenceName": "ls_key_vault",
 					"type": "LinkedServiceReference"
 				},
-				"secretName": "dbw-key",
-				"secretVersion": "94e057de3d944ed09ebbba5ce6277daf"
+				"secretName": "dbw-key"
 			},
-			"existingClusterId": "0517-165337-2ljm4mtf"
+			"existingClusterId": "0518-162617-f1lippva"
 		},
 		"connectVia": {
 			"referenceName": "ir-dataside-incompany",
